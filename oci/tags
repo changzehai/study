@@ -1,0 +1,25 @@
+!_TAG_FILE_FORMAT	2	/extended format; --format=1 will not append ;" to lines/
+!_TAG_FILE_SORTED	1	/0=unsorted, 1=sorted, 2=foldcase/
+!_TAG_PROGRAM_AUTHOR	Darren Hiebert	/dhiebert@users.sourceforge.net/
+!_TAG_PROGRAM_NAME	Exuberant Ctags	//
+!_TAG_PROGRAM_URL	http://ctags.sourceforge.net	/official site/
+!_TAG_PROGRAM_VERSION	5.8	//
+SQL	test.c	/^static text* SQL=(text *)"insert into tab1(id, name) values (:1, :2)";$/;"	v	file:
+conn_server	test.c	/^int conn_server()$/;"	f
+create_env	test.c	/^int create_env()$/;"	f
+free_handle	test.c	/^void free_handle()$/;"	f
+init_handle	test.c	/^int init_handle()$/;"	f
+main	test.c	/^int main()$/;"	f
+oci_exec	test.c	/^int oci_exec()$/;"	f
+oracle	test.c	/^static text* oracle=(text *)"melco";$/;"	v	file:
+p_bnd	test.c	/^static OCIBind   *p_bnd = (OCIBind *)NULL;    \/\/OCI bind handle$/;"	v	file:
+p_dfn	test.c	/^static OCIDefine  *p_dfn = (OCIDefine *)NULL;   \/\/OCI define handle$/;"	v	file:
+p_env	test.c	/^static OCIEnv    *p_env;          \/\/OCI environment handle$/;"	v	file:
+p_err	test.c	/^static OCIError   *p_err;          \/\/OCI error handle$/;"	v	file:
+p_ser	test.c	/^static OCIServer  *p_ser;          \/\/OCI server handle$/;"	v	file:
+p_sql	test.c	/^static OCIStmt   *p_sql;          \/\/OCI statement handle$/;"	v	file:
+p_svc	test.c	/^static OCISvcCtx  *p_svc;          \/\/OCI service context handel$/;"	v	file:
+p_usr	test.c	/^static OCISession  *p_usr;          \/\/OCI user session handle$/;"	v	file:
+password	test.c	/^static text* password=(text *)"Orcl1234";$/;"	v	file:
+quit_server	test.c	/^void quit_server()$/;"	f
+username	test.c	/^static text* username=(text *)"melco";$/;"	v	file:
