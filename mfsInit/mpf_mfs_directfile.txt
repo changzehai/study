@@ -1,0 +1,3 @@
+#文件名	文件号	文件类型	储存标志	on/sub	每条记录大小	总记录数	主服务器	次服务器
+ApiSetsubi2	1	M	S	3	512	1024	Linux	Linux #设备DB文件
+gyoum	    2	D	-	3	256	 512	Linux	Linux #业务文件
