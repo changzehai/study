@@ -1,148 +1,93 @@
-1、生成可执行文件的makefile
-######################################
-#
-######################################
-#source file
-#源文件，自动找所有.c和.cpp文件，并将目标定义为同名.o文件
-SOURCE  := $(wildcard *.c) $(wildcard *.cpp)
-OBJS    := $(patsubst %.c,%.o,$(patsubst %.cpp,%.o,$(SOURCE)))
+#########################################################
+# FNAME		: Makefile万能模板                          #
+# Version	:                                           #
+# FUNCTION	:                                           #
+# CRATE		: 2017-07-10 changzehai                     #
+# Copyright (C) 2017 changzehai. All Rights Reserved.   #
+#########################################################
 
-#target you can change test to what you want
+
+#源文件类型
+# The valid suffixes are among of .c, .C, .cc, .cpp, .CPP, .c++, .cp, or .cxx.
+# SRCEXTS   := .c      # C program
+# SRCEXTS   := .cpp    # C++ program
+# SRCEXTS   := .c .cpp # C/C++ program
+SRCEXTS   := .c
+
+#source file
+#源文件
+HDRS	:= mfs_init.h
+
+SRCS	:= mfs_shm_func.c \
+           mfs_file_func.c \
+           mfs_init.c
+
+OBJS	:= mfs_shm_func.o \
+           mfs_file_func.o \
+           mfs_init.o
+
 #目标文件名，输入任意你想要的执行文件名
-TARGET  := test
+PROGRAM  := mfsInit
+
+#使用到的头文件和库文件路径指定
+INCLUDE := -I. \
+
+LIBS    := 
+	      
+
+
+#变量定义
+CC      		= cc
+LD 				= cc
+MAKE			= make
+MAKEFILE		= Makefile
+TARGET			= all clean
+TARGET_LINUX	= $(TARGET:=_linux)
+HOST_LINUX		= ./linux
+
 
 #compile and lib parameter
 #编译参数
-CC      := gcc
-LIBS    :=
-LDFLAGS :=
+LDFLAGS := 
 DEFINES :=
-INCLUDE := -I.
 CFLAGS  := -g -Wall -O3 $(DEFINES) $(INCLUDE)
 CXXFLAGS:= $(CFLAGS) -DHAVE_CONFIG_H
 
 
-#i think you should do anything here
 #下面的基本上不需要做任何改动了
-.PHONY : everything objs clean veryclean rebuild
+default		: all
 
-everything : $(TARGET)
+$(OBJS)		:   $(HDRS) $(SRCS)
+				@if [ ! -d $(HOST_LINUX) ]; then \
+				echo "Make directory $(HOST_LINUX)"; mkdir -p $(HOST_LINUX); fi
+ifeq ($(strip $(SRCEXTS)), .c)  # C file
+				@echo "Compiling -c $(INCLUDE) $(@F:.o=.c) -o $@"
+				@($(CC) $(CFLAGS) $(INCLUDE) -c $(@F:.o=.c) -o $@)
+else                            # C++ file
+				@echo "Compiling -c $(INCLUDE) $(@F:.o=.cpp) -o $@"
+				@($(CC) $(CXXFLAGS) $(INCLUDE) -c $(@F:.o=.cpp) -o $@)
+endif
 
-all : $(TARGET)
-
-objs : $(OBJS)
-
-rebuild: veryclean everything
-
-clean :
-    rm -fr *.so
-    rm -fr *.o
-
-veryclean : clean
-    rm -fr $(TARGET)
-
-$(TARGET) : $(OBJS)
-    $(CC) $(CXXFLAGS) -o $@ $(OBJS) $(LDFLAGS) $(LIBS)
-
-
+$(PROGRAM)	: $(OBJS)
+				@if [ ! -d $(HOST_LINUX) ]; then \
+				echo "Make directory $(HOST_LINUX)"; mkdir -p $(HOST_LINUX); fi
+				@echo "Linking $(PROGRAM)"
+				@($(LD) $(LDFLAGS) $(LIBS) $(OBJS) -o $@)
+				@echo "done"
 
 
-2、生成静态链接库的makefile
+all_	: $(PROGRAM)
 
-######################################
-#
-#
-######################################
+clean_:;
+		@rm -f $(OBJS) $(PROGRAM)
 
-#target you can change test to what you want
-#共享库文件名，lib*.a
-TARGET  := libtest.a
+$(TARGET):
+			@(echo "Making on `uname -s` ... $(@F)"; \
+			$(MAKE) -f $(MAKEFILE) $(@F:=_linux))
 
-#compile and lib parameter
-#编译参数
-CC      := gcc
-AR      = ar
-RANLIB  = ranlib
-LIBS    :=
-LDFLAGS :=
-DEFINES :=
-INCLUDE := -I.
-CFLAGS  := -g -Wall -O3 $(DEFINES) $(INCLUDE)
-CXXFLAGS:= $(CFLAGS) -DHAVE_CONFIG_H
-
-#i think you should do anything here
-#下面的基本上不需要做任何改动了
-
-#source file
-#源文件，自动找所有.c和.cpp文件，并将目标定义为同名.o文件
-SOURCE  := $(wildcard *.c) $(wildcard *.cpp)
-OBJS    := $(patsubst %.c,%.o,$(patsubst %.cpp,%.o,$(SOURCE)))
-
-.PHONY : everything objs clean veryclean rebuild
-
-everything : $(TARGET)
-
-all : $(TARGET)
-
-objs : $(OBJS)
-
-rebuild: veryclean everything
-
-clean :
-    rm -fr *.o
-
-veryclean : clean
-    rm -fr $(TARGET)
-
-$(TARGET) : $(OBJS)
-    $(AR) cru $(TARGET) $(OBJS)
-    $(RANLIB) $(TARGET)
-
-
-3、生成动态链接库的makefile
-######################################
-#
-#
-######################################
-
-#target you can change test to what you want
-#共享库文件名，lib*.so
-TARGET  := libtest.so
-
-#compile and lib parameter
-#编译参数
-CC      := gcc
-LIBS    :=
-LDFLAGS :=
-DEFINES :=
-INCLUDE := -I.
-CFLAGS  := -g -Wall -O3 $(DEFINES) $(INCLUDE)
-CXXFLAGS:= $(CFLAGS) -DHAVE_CONFIG_H
-SHARE   := -fPIC -shared -o
-
-#i think you should do anything here
-#下面的基本上不需要做任何改动了
-
-#source file
-#源文件，自动找所有.c和.cpp文件，并将目标定义为同名.o文件
-SOURCE  := $(wildcard *.c) $(wildcard *.cpp)
-OBJS    := $(patsubst %.c,%.o,$(patsubst %.cpp,%.o,$(SOURCE)))
-
-.PHONY : everything objs clean veryclean rebuild
-
-everything : $(TARGET)
-
-all : $(TARGET)
-
-objs : $(OBJS)
-
-rebuild: veryclean everything
-
-clean :
-    rm -fr *.o
-
-veryclean : clean
-    rm -fr $(TARGET)
-
-$(TARGET) : $(OBJS)
-    $(CC) $(CXXFLAGS) $(SHARE) $@ $(OBJS) $(LDFLAGS) $(LIBS)
+$(TARGET_LINUX):
+			echo $(OBJS)
+			@($(MAKE) -f $(MAKEFILE) \
+			"OBJS=`for obj in $(OBJS); do echo -n $(HOST_LINUX)/$${obj} " "; done` " \
+			"PROGRAM=$(HOST_LINUX)/$(PROGRAM)" \
+			$(@F:linux=))
